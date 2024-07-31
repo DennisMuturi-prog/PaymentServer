@@ -1,5 +1,6 @@
 require("dotenv").config();
-const {fetchOrderItemsDetails}=require('./firebaseUtils/firebaseConfig')
+const {getAccessToken,stkPush}=require('./Mpesa/mpesa')
+const {fetchOrderItemsDetails,getTotalPrice}=require('./firebaseUtils/firebaseConfig')
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -8,9 +9,21 @@ const PORT=process.env.PORT || 3000
 const corsOptions = {
   origin: "http://localhost:4200",
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({extended:false}))
+async function getAuthToken(req, res, next) {
+  try {
+    const token = await getAccessToken();
+    req.access_token = token;
+    next();
+  } catch (error) {
+    console.log(error)
+    res.status(502).json({err:error.message});
+  }
+}
+
 app.post('/stripePayment',async (req,res)=>{
   try {
     console.log(req.body)
@@ -41,6 +54,19 @@ app.post('/stripePayment',async (req,res)=>{
     res.status(500).json({error:e.message})
     
   }
+})
+app.post('/mpesa',getAuthToken,async (req,res)=>{
+  console.log(req.body)
+  try {
+       const orderDetails = await fetchOrderItemsDetails(req.body.orderId);
+       const amount=getTotalPrice(orderDetails)
+        const stkResponse=await stkPush(amount,req.body.phoneNumber,req.access_token)
+        console.log(stkResponse)
+        res.status(200).json({customerMessage:stkResponse}) 
+    } catch (error) {
+      console.log('error 2',error)
+        res.status(502).json({errMessage:error.message})  
+    }
 })
 app.listen(PORT,()=>{
     console.log('running on port',PORT)
