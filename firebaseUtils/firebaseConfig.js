@@ -16,4 +16,7 @@ async function fetchOrderItemsDetails(orderId){
     }))
     return finalDetails
 }
-module.exports={fetchOrderItemsDetails}
+function getTotalPrice(orderItems){
+    return orderItems.reduce((acc,curr)=>acc+curr.quantity*curr.price,0)
+}
+module.exports={fetchOrderItemsDetails,getTotalPrice}
