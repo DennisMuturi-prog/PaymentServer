@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {getAccessToken,stkPush}=require('./Mpesa/mpesa')
-const {fetchOrderItemsDetails,getTotalPrice}=require('./firebaseUtils/firebaseConfig')
+const {fetchOrderItemsDetails,getTotalPrice,updateOrderPaymentDetails,changePaymentCompletionStatus}=require('./firebaseUtils/firebaseConfig')
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -44,9 +44,10 @@ app.post('/stripePayment',async (req,res)=>{
       }),
       mode:'payment',
       success_url:'https://google.com',
-      cancel_url:'https://youtube.com'
+      cancel_url:'https://youtube.com',
     })
-    
+    console.log(session.id)
+    await updateOrderPaymentDetails(req.body.orderId,session.id) 
     res.json({url:session.url})
     
   } catch (e) {
@@ -67,6 +68,18 @@ app.post('/mpesa',getAuthToken,async (req,res)=>{
       console.log('error 2',error)
         res.status(502).json({errMessage:error.message})  
     }
+})
+app.post('/stripeWebHook',async(req,res)=>{
+  console.log(req.body)
+  try {
+    const sessionId=req.body.data.object.id
+    await changePaymentCompletionStatus(sessionId)
+    
+  } catch (error) {
+    console.log(error)
+    
+  }
+  res.json({received:true})
 })
 app.listen(PORT,()=>{
     console.log('running on port',PORT)
