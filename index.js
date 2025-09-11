@@ -7,7 +7,10 @@ const cors = require("cors");
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const PORT=process.env.PORT || 3000
 const corsOptions = {
-  origin: "http://localhost:4200",
+  origin: [
+    "http://localhost:4200",
+    "https://ecommerce-965194135392.europe-west9.run.app"
+  ],
 };
 
 app.use(cors(corsOptions));
@@ -33,7 +36,7 @@ app.post('/stripePayment',async (req,res)=>{
       line_items:orderDetails.map(item=>{
         return {
           price_data:{
-            currency:'usd',
+            currency:'kes',
             product_data:{
               name:item.title
             },
@@ -43,8 +46,8 @@ app.post('/stripePayment',async (req,res)=>{
         }
       }),
       mode:'payment',
-      success_url:'https://google.com',
-      cancel_url:'https://youtube.com',
+      success_url:'https://ecommerce-965194135392.europe-west9.run.app/home',
+      cancel_url:'https://ecommerce-965194135392.europe-west9.run.app/checkout',
     })
     console.log(session.id)
     await updateOrderPaymentDetails(req.body.orderId,session.id) 
@@ -69,8 +72,11 @@ app.post('/mpesa',getAuthToken,async (req,res)=>{
         res.status(502).json({errMessage:error.message})  
     }
 })
+app.get('/',(req,res)=>{
+  res.status(200).send('hello')
+})
 app.post('/stripeWebHook',async(req,res)=>{
-  console.log(req.body)
+  console.log("stripe webhook triggered",req.body)
   try {
     const sessionId=req.body.data.object.id
     await changePaymentCompletionStatus(sessionId)
