@@ -1,6 +1,6 @@
 require("dotenv").config();
 const {getAccessToken,stkPush}=require('./Mpesa/mpesa')
-const {fetchOrderItemsDetails,getTotalPrice,updateOrderPaymentDetails,changePaymentCompletionStatus}=require('./firebaseUtils/firebaseConfig')
+const {fetchOrderItemsDetails,getTotalPrice,updateOrderPaymentDetails,changePaymentCompletionStatus, get_products}=require('./firebaseUtils/firebaseConfig')
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -72,8 +72,9 @@ app.post('/mpesa',getAuthToken,async (req,res)=>{
         res.status(502).json({errMessage:error.message})  
     }
 })
-app.get('/',(req,res)=>{
-  res.status(200).send('hello')
+app.get('/',async (req,res)=>{
+  const products=await get_products();
+  res.json(products)
 })
 app.post('/stripeWebHook',async(req,res)=>{
   console.log("stripe webhook triggered",req.body)
