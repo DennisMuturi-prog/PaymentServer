@@ -72,9 +72,13 @@ app.post('/mpesa',getAuthToken,async (req,res)=>{
         res.status(502).json({errMessage:error.message})  
     }
 })
-app.get('/',async (req,res)=>{
+app.get('/',async (_,res)=>{
   const products=await get_products();
   res.json(products)
+})
+
+app.get('/hello',async (_,res)=>{
+  res.send('hello')
 })
 app.post('/stripeWebHook',async(req,res)=>{
   console.log("stripe webhook triggered",req.body)
