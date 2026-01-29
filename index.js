@@ -4,6 +4,7 @@ const {fetchOrderItemsDetails,getTotalPrice,updateOrderPaymentDetails,changePaym
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const { normalizeKenyanPhoneNumber,validateKenyanPhoneNumber } = require("./validation");
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 const PORT=process.env.PORT || 3000
 const corsOptions = {
@@ -62,9 +63,13 @@ app.post('/stripePayment',async (req,res)=>{
 app.post('/mpesa',getAuthToken,async (req,res)=>{
   console.log(req.body)
   try {
+    if (!validateKenyanPhoneNumber(req.body.phoneNumber)) {
+      return res.status(400).json({ errMessage: 'Invalid Kenyan phone number' });
+    }
        const orderDetails = await fetchOrderItemsDetails(req.body.orderId);
        const amount=getTotalPrice(orderDetails)
-        const stkResponse=await stkPush(amount,req.body.phoneNumber,req.access_token)
+       
+        const stkResponse=await stkPush(amount,normalizeKenyanPhoneNumber(req.body.phoneNumber),req.access_token)
         console.log(stkResponse)
         res.status(200).json({customerMessage:stkResponse}) 
     } catch (error) {
