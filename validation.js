@@ -26,8 +26,8 @@ function normalizeKenyanPhoneNumber(phoneNumber) {
     cleaned = cleaned.substring(1);
   }
   
-  // If doesn't start with 254, add it
-  if (!cleaned.startsWith('254')) {
+  
+  if (cleaned.startsWith('254')) {
     cleaned = cleaned.substring(3);;
   }
   
