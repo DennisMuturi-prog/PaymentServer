@@ -1,4 +1,4 @@
-export function validateKenyanPhoneNumber(phoneNumber) {
+function validateKenyanPhoneNumber(phoneNumber) {
   // Remove spaces
   let cleaned = phoneNumber.replace(/\s+/g, '');
   
@@ -17,7 +17,7 @@ export function validateKenyanPhoneNumber(phoneNumber) {
   return kenyanPhoneRegex.test(cleaned);
 }
 
-export function normalizeKenyanPhoneNumber(phoneNumber) {
+function normalizeKenyanPhoneNumber(phoneNumber) {
   // Remove spaces
   let cleaned = phoneNumber.replace(/\s+/g, '');
   
