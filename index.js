@@ -83,7 +83,7 @@ app.get('/',async (_,res)=>{
 })
 
 app.get('/hello',async (_,res)=>{
-  res.send('hello')
+  res.send('hello world')
 })
 app.post('/stripeWebHook',async(req,res)=>{
   console.log("stripe webhook triggered",req.body)
