@@ -9,7 +9,7 @@ const PORT=process.env.PORT || 3000
 const corsOptions = {
   origin: [
     "http://localhost:4200",
-    "https://ecommerce-965194135392.europe-west9.run.app"
+    "https://jobo-965194135392.europe-west1.run.app"
   ],
 };
 
