@@ -11,6 +11,9 @@ function validateKenyanPhoneNumber(phoneNumber) {
   if (cleaned.startsWith('254')) {
     cleaned = cleaned.substring(3);
   }
+  if (cleaned.startsWith('+254')) {
+    cleaned = cleaned.substring(4);
+  }
   
   // Kenyan phone numbers: 7 or 1, then 8 more digits
   const kenyanPhoneRegex = /^(7|1)\d{8}$/;
@@ -29,6 +32,9 @@ function normalizeKenyanPhoneNumber(phoneNumber) {
   
   if (cleaned.startsWith('254')) {
     cleaned = cleaned.substring(3);;
+  }
+  if (cleaned.startsWith('+254')) {
+    cleaned = cleaned.substring(4);;
   }
   
   return cleaned;
