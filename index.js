@@ -24,7 +24,7 @@ async function getAuthToken(req, res, next) {
     next();
   } catch (error) {
     console.log(error)
-    res.status(502).json({err:error.message});
+    res.status(502).json({errMessage:error.message});
   }
 }
 
